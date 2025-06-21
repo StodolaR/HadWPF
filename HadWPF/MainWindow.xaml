@@ -1,0 +1,69 @@
+﻿<Window x:Class="HadWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HadWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" SizeToContent="WidthAndHeight">
+    <Grid Background="LightGreen">
+        <Canvas x:Name="cnSnakeBoard" Width="500" Height="500">
+            <Path x:Name="pHead" Fill="Green" Panel.ZIndex="1">
+                <Path.RenderTransform>
+                    <RotateTransform x:Name="rtHead"/>
+                </Path.RenderTransform>
+                <Path.Data>
+                    <EllipseGeometry Center="0,-2" RadiusX="10" RadiusY="14"/>
+                </Path.Data>
+            </Path>
+            <Path x:Name="pFace" Fill="Black" Panel.ZIndex="1">
+                <Path.RenderTransform>
+                    <RotateTransform x:Name="rtFace"/>
+                </Path.RenderTransform>
+                <Path.Data>
+                    <GeometryGroup>
+                        <EllipseGeometry Center="6,-1" RadiusX="2" RadiusY="3"/>
+                        <EllipseGeometry Center="-6,-1" RadiusX="2" RadiusY="3"/>
+                        <PathGeometry Figures="M -1 12 L -2 16 L 0 14 L 2 16 L 1 12 Z"/>
+                    </GeometryGroup>
+                </Path.Data>
+            </Path>
+        </Canvas>
+        <Canvas x:Name="cnAppleBoard" Width="500" Height="500">
+            <Path x:Name="pStalk" Data="M 0 -5 L 0 -2" StrokeThickness="1" Stroke="Black"/>
+            <Path x:Name="pAppleLeft" Fill="red">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="-10"/>
+                </Path.RenderTransform>
+                <Path.Data>
+                    <EllipseGeometry Center="-2,0" RadiusX="3" RadiusY="4"/>
+                </Path.Data>
+            </Path>
+            <Path x:Name="pAppleRight" Fill="red">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="10"/>
+                </Path.RenderTransform>
+                <Path.Data>
+                    <EllipseGeometry Center="2,0" RadiusX="3" RadiusY="4"/>
+                </Path.Data>
+            </Path>
+            <Path x:Name="pWrongStalk" Canvas.Left="-10" Data="M 0 -5 L 0 -2" StrokeThickness="1" Stroke="Black"/>
+            <Path x:Name="pWrongAppleLeft" Fill="DarkGoldenrod" Canvas.Left="-10">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="-10"/>
+                </Path.RenderTransform>
+                <Path.Data>
+                    <EllipseGeometry Center="-2,0" RadiusX="3" RadiusY="4"/>
+                </Path.Data>
+            </Path>
+            <Path x:Name="pWronfAppleRight" Fill="red" Canvas.Left="-10">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="10"/>
+                </Path.RenderTransform>
+                <Path.Data>
+                    <EllipseGeometry Center="2,0" RadiusX="3" RadiusY="4"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+    </Grid>
+</Window>
