@@ -17,9 +17,11 @@ namespace HadWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int startSpeedInterval = 100;
         private const int snakePartsDistance = 5;
         private const int snakePartRadius = 6;
+        private const int snakePartStroke = 3;
+        private const int snakeHeadRadius = 10;
+        private const int foodRadius = 6;
         private const int tailPartsCount = 4;
         private const int headPartsCount = 2;
         private double coordX = 250;
@@ -27,20 +29,13 @@ namespace HadWPF
         private int angle = 0;
         private int score = 0;
         private int length = 30;
+        private int speedInterval = 100;
         private EllipseGeometry elBodyPart;
-        private List<Path> apple = new List<Path>();
-        private List<Path> wrongApple = new List<Path>();
         private Random random = new Random();
         private DispatcherTimer timer;
         public MainWindow()
         {
             InitializeComponent();
-            apple.Add(pStalk);
-            apple.Add(pAppleLeft);
-            apple.Add(pAppleRight);
-            wrongApple.Add(pWrongStalk);
-            wrongApple.Add(pWrongAppleLeft);
-            wrongApple.Add(pWronfAppleRight);
             for (int radius = 4; radius < 8; radius++)
             {
                 EllipseGeometry elTailPart = new EllipseGeometry(new Point (0,0), radius, radius);
@@ -51,7 +46,7 @@ namespace HadWPF
             elBodyPart = new EllipseGeometry(new Point(0, 0), snakePartRadius, snakePartRadius);
             for (int i = 0; i < length - headPartsCount - tailPartsCount; i++)
             {
-                Path bodyPart = new Path() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = 3 };
+                Path bodyPart = new Path() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = snakePartStroke };
                 PlacePathToCanvas(cnSnakeBoard, bodyPart, coordX, coordY);
                 coordY += snakePartsDistance;
             }
@@ -61,7 +56,7 @@ namespace HadWPF
             PlacePathToCanvas(cnSnakeBoard, pFace, coordX, coordY);
             PlaceFood();
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(startSpeedInterval);
+            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
             timer.Tick += Timer_Tick;
             timer.Start();
         }
@@ -76,31 +71,40 @@ namespace HadWPF
         }
         private void PlaceFood()
         {
-            double foodCoordX = random.Next(10, (int)cnAppleBoard.Width - 10);
-            double foodCoordY  = random.Next(10, (int)cnAppleBoard.Height - 10);
-            PlacePathToCanvas(null, pStalk, foodCoordX, foodCoordY);
-            PlacePathToCanvas(null, pAppleLeft, foodCoordX, foodCoordY);
-            PlacePathToCanvas(null, pAppleRight, foodCoordX, foodCoordY);
+            double distance = 0;
+            double collisionDistance = snakeHeadRadius + foodRadius;
+            while (distance < collisionDistance)
+            {
+                double foodCoordX = random.Next(10, (int)cnAppleBoard.Width - 10);
+                double foodCoordY = random.Next(10, (int)cnAppleBoard.Height - 10);
+                PlacePathToCanvas(null, pStalk, foodCoordX, foodCoordY);
+                PlacePathToCanvas(null, pAppleLeft, foodCoordX, foodCoordY);
+                PlacePathToCanvas(null, pAppleRight, foodCoordX, foodCoordY);
+                foreach(Path snakePart in cnSnakeBoard.Children)
+                {
+                    if ((distance = GetDistance(pAppleLeft, snakePart)) < collisionDistance) break;
+                }
+            }
         }
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
             coordX += (Math.Sin(angle * Math.PI / 180)) * snakePartsDistance;
             coordY += (Math.Cos(angle * Math.PI / 180)) * snakePartsDistance;
-            for(int i = 0;i < tailPartsCount ; i++)
-            {
-                Canvas.SetLeft(cnSnakeBoard.Children[i], Canvas.GetLeft(cnSnakeBoard.Children[i + 1]));
-                Canvas.SetTop(cnSnakeBoard.Children[i], Canvas.GetTop(cnSnakeBoard.Children[i + 1]));
-            }
             Path movedPart;
             if (cnSnakeBoard.Children.Count >= length)
             {
+                for (int i = 0; i < tailPartsCount; i++)
+                {
+                    Canvas.SetLeft(cnSnakeBoard.Children[i], Canvas.GetLeft(cnSnakeBoard.Children[i + 1]));
+                    Canvas.SetTop(cnSnakeBoard.Children[i], Canvas.GetTop(cnSnakeBoard.Children[i + 1]));
+                }
                 movedPart = (Path)cnSnakeBoard.Children[tailPartsCount];
                 cnSnakeBoard.Children.Remove(movedPart);  
             }
             else
             {
-                movedPart = new Path() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = 3 }; ;
+                movedPart = new Path() {Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = snakePartStroke}; 
             }
             cnSnakeBoard.Children.Insert(cnSnakeBoard.Children.Count - headPartsCount, movedPart);
             PlacePathToCanvas(null, movedPart, Canvas.GetLeft(pHead), Canvas.GetTop(pHead));
@@ -115,6 +119,50 @@ namespace HadWPF
                 angle -= 10;
             }
             rtHead.Angle = rtFace.Angle = -angle;
+            CheckColisions();
+        }
+        private void CheckColisions()
+        {
+            double distance;
+            double collisionDistance = snakePartRadius + snakePartStroke + snakeHeadRadius -1;
+            for (int i = 0; i < cnSnakeBoard.Children.Count - 35; i++)
+            {
+                distance = GetDistance(pHead,(Path)cnSnakeBoard.Children[i]);
+                if (distance < collisionDistance)
+                {
+                    timer.Stop();
+                    MessageBox.Show("Kusl ses do ocasa");
+                    return;
+                }
+            }
+            if (coordX <= snakeHeadRadius || coordY <= snakeHeadRadius || coordX >= cnSnakeBoard.Width - snakeHeadRadius
+                || coordY >= cnSnakeBoard.Height - snakeHeadRadius)
+            {
+                timer.Stop();
+                MessageBox.Show("Narvals do pangejtu");
+                return;
+            }
+            collisionDistance = snakeHeadRadius + foodRadius;
+            distance = GetDistance(pHead, pAppleLeft);
+            if (distance < collisionDistance)
+            {
+                EatFood(1);
+            }
+        }
+        private void EatFood(int point)
+        {
+            score += point;
+            speedInterval -= 2;
+            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
+            window.Title = "Score: " + score;
+            length += 10;
+            PlaceFood();
+        }
+        private double GetDistance(Path item1, Path Item2)
+        {
+            double distanceX = Canvas.GetLeft(item1) - Canvas.GetLeft(Item2);
+            double distanceY = Canvas.GetTop(item1) - Canvas.GetTop(Item2);
+            return Math.Sqrt(distanceX * distanceX + distanceY * distanceY);
         }
     }
 }
