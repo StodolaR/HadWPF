@@ -45,36 +45,31 @@ namespace HadWPF
             {
                 EllipseGeometry elTailPart = new EllipseGeometry(new Point (0,0), radius, radius);
                 Path tailPart = new Path() { Data = elTailPart, Fill = Brushes.Green };
-                cnSnakeBoard.Children.Add(tailPart);
-                Canvas.SetLeft(tailPart, coordX);
-                Canvas.SetTop(tailPart, coordY);
+                PlacePathToCanvas(cnSnakeBoard, tailPart, coordX, coordY);
                 coordY += snakePartsDistance;
             }
             elBodyPart = new EllipseGeometry(new Point(0, 0), snakePartRadius, snakePartRadius);
             for (int i = 0; i < length - headPartsCount - tailPartsCount; i++)
             {
-                Path bodyPart = new Path() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = 3 };;
-                cnSnakeBoard.Children.Add(bodyPart);
-                Canvas.SetLeft(bodyPart, coordX);
-                Canvas.SetTop(bodyPart, coordY);
+                Path bodyPart = new Path() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = 3 };
+                PlacePathToCanvas(cnSnakeBoard, bodyPart, coordX, coordY);
                 coordY += snakePartsDistance;
             }
             cnSnakeBoard.Children.Remove(pHead);
-            cnSnakeBoard.Children.Add(pHead);
             cnSnakeBoard.Children.Remove(pFace);
-            cnSnakeBoard.Children.Add(pFace);
-            Canvas.SetLeft(pHead, coordX);
-            Canvas.SetTop(pHead, coordY);
-            Canvas.SetLeft(pFace, coordX);
-            Canvas.SetTop(pFace, coordY);
+            PlacePathToCanvas(cnSnakeBoard, pHead, coordX, coordY);
+            PlacePathToCanvas(cnSnakeBoard, pFace, coordX, coordY);
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(startSpeedInterval);
             timer.Tick += Timer_Tick;
             timer.Start();
         }
-        private void PlacePathToCanvas(Canvas canvas, Path path, double left, double top)
+        private void PlacePathToCanvas(Canvas? canvas, Path path, double left, double top)
         {
-            canvas.Children.Add(path);
+            if (canvas != null)
+            {
+                canvas.Children.Add(path);
+            }
             Canvas.SetLeft(path, left);
             Canvas.SetTop(path, top);
         }
@@ -98,12 +93,9 @@ namespace HadWPF
                 movedPart = new Path() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = 3 }; ;
             }
             cnSnakeBoard.Children.Insert(cnSnakeBoard.Children.Count - headPartsCount, movedPart);
-            Canvas.SetLeft(movedPart, Canvas.GetLeft(pHead));
-            Canvas.SetTop(movedPart, Canvas.GetTop(pHead));
-            Canvas.SetLeft(pHead, coordX);
-            Canvas.SetTop(pHead, coordY);
-            Canvas.SetLeft(pFace, coordX);
-            Canvas.SetTop(pFace, coordY);
+            PlacePathToCanvas(null, movedPart, Canvas.GetLeft(pHead), Canvas.GetTop(pHead));
+            PlacePathToCanvas(null, pHead, coordX, coordY);
+            PlacePathToCanvas(null, pFace, coordX, coordY);
         }
     }
 }
