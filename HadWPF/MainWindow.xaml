@@ -13,7 +13,7 @@
                     <RotateTransform x:Name="rtHead"/>
                 </Path.RenderTransform>
                 <Path.Data>
-                    <EllipseGeometry Center="0,-2" RadiusX="10" RadiusY="14"/>
+                    <EllipseGeometry Center="0,0" RadiusX="10" RadiusY="14"/>
                 </Path.Data>
             </Path>
             <Path x:Name="pFace" Fill="Black" Panel.ZIndex="1">
@@ -22,21 +22,21 @@
                 </Path.RenderTransform>
                 <Path.Data>
                     <GeometryGroup>
-                        <EllipseGeometry Center="6,-1" RadiusX="2" RadiusY="3"/>
-                        <EllipseGeometry Center="-6,-1" RadiusX="2" RadiusY="3"/>
-                        <PathGeometry Figures="M -1 12 L -2 16 L 0 14 L 2 16 L 1 12 Z"/>
+                        <EllipseGeometry Center="6,1" RadiusX="2" RadiusY="3"/>
+                        <EllipseGeometry Center="-6,1" RadiusX="2" RadiusY="3"/>
+                        <PathGeometry Figures="M -1 14 L -2 18 L 0 16 L 2 18 L 1 14 Z"/>
                     </GeometryGroup>
                 </Path.Data>
             </Path>
         </Canvas>
         <Canvas x:Name="cnAppleBoard" Width="500" Height="500">
-            <Path x:Name="pStalk" Data="M 0 -5 L 0 -2" StrokeThickness="1" Stroke="Black"/>
+            <Path x:Name="pStalk" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black"/>
             <Path x:Name="pAppleLeft" Fill="red">
                 <Path.RenderTransform>
                     <RotateTransform Angle="-10"/>
                 </Path.RenderTransform>
                 <Path.Data>
-                    <EllipseGeometry Center="-2,0" RadiusX="3" RadiusY="4"/>
+                    <EllipseGeometry Center="-2,0" RadiusX="5" RadiusY="6"/>
                 </Path.Data>
             </Path>
             <Path x:Name="pAppleRight" Fill="red">
@@ -44,16 +44,16 @@
                     <RotateTransform Angle="10"/>
                 </Path.RenderTransform>
                 <Path.Data>
-                    <EllipseGeometry Center="2,0" RadiusX="3" RadiusY="4"/>
+                    <EllipseGeometry Center="2,0" RadiusX="5" RadiusY="6"/>
                 </Path.Data>
             </Path>
-            <Path x:Name="pWrongStalk" Canvas.Left="-10" Data="M 0 -5 L 0 -2" StrokeThickness="1" Stroke="Black"/>
+            <Path x:Name="pWrongStalk" Canvas.Left="-10" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black"/>
             <Path x:Name="pWrongAppleLeft" Fill="DarkGoldenrod" Canvas.Left="-10">
                 <Path.RenderTransform>
                     <RotateTransform Angle="-10"/>
                 </Path.RenderTransform>
                 <Path.Data>
-                    <EllipseGeometry Center="-2,0" RadiusX="3" RadiusY="4"/>
+                    <EllipseGeometry Center="-2,0" RadiusX="5" RadiusY="6"/>
                 </Path.Data>
             </Path>
             <Path x:Name="pWronfAppleRight" Fill="red" Canvas.Left="-10">
@@ -61,7 +61,7 @@
                     <RotateTransform Angle="10"/>
                 </Path.RenderTransform>
                 <Path.Data>
-                    <EllipseGeometry Center="2,0" RadiusX="3" RadiusY="4"/>
+                    <EllipseGeometry Center="2,0" RadiusX="5" RadiusY="6"/>
                 </Path.Data>
             </Path>
         </Canvas>

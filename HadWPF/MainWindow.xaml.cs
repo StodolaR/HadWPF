@@ -17,7 +17,7 @@ namespace HadWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const int startSpeedInterval = 200;
+        private const int startSpeedInterval = 100;
         private const int snakePartsDistance = 5;
         private const int snakePartRadius = 6;
         private const int tailPartsCount = 4;
@@ -59,6 +59,7 @@ namespace HadWPF
             cnSnakeBoard.Children.Remove(pFace);
             PlacePathToCanvas(cnSnakeBoard, pHead, coordX, coordY);
             PlacePathToCanvas(cnSnakeBoard, pFace, coordX, coordY);
+            PlaceFood();
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(startSpeedInterval);
             timer.Tick += Timer_Tick;
@@ -73,6 +74,15 @@ namespace HadWPF
             Canvas.SetLeft(path, left);
             Canvas.SetTop(path, top);
         }
+        private void PlaceFood()
+        {
+            double foodCoordX = random.Next(10, (int)cnAppleBoard.Width - 10);
+            double foodCoordY  = random.Next(10, (int)cnAppleBoard.Height - 10);
+            PlacePathToCanvas(null, pStalk, foodCoordX, foodCoordY);
+            PlacePathToCanvas(null, pAppleLeft, foodCoordX, foodCoordY);
+            PlacePathToCanvas(null, pAppleRight, foodCoordX, foodCoordY);
+        }
+
         private void Timer_Tick(object? sender, EventArgs e)
         {
             coordX += (Math.Sin(angle * Math.PI / 180)) * snakePartsDistance;
@@ -96,6 +106,15 @@ namespace HadWPF
             PlacePathToCanvas(null, movedPart, Canvas.GetLeft(pHead), Canvas.GetTop(pHead));
             PlacePathToCanvas(null, pHead, coordX, coordY);
             PlacePathToCanvas(null, pFace, coordX, coordY);
+            if (Keyboard.IsKeyDown(Key.Left))
+            {
+                angle += 10;
+            }
+            if (Keyboard.IsKeyDown(Key.Right))
+            {
+                angle -= 10;
+            }
+            rtHead.Angle = rtFace.Angle = -angle;
         }
     }
 }
