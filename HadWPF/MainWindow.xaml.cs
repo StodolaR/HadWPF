@@ -37,6 +37,7 @@ namespace HadWPF
         public MainWindow()
         {
             InitializeComponent();
+            elBodyPart = new EllipseGeometry(new Point(0, 0), snakePartRadius, snakePartRadius);
             PlaceSneak();
             PlaceFood(new Path[] {pStalk, pAppleLeft, pAppleRight});
             timer = new DispatcherTimer();
