@@ -37,9 +37,18 @@ namespace HadWPF
         public MainWindow()
         {
             InitializeComponent();
+            PlaceSneak();
+            PlaceFood(new Path[] {pStalk, pAppleLeft, pAppleRight});
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+        private void PlaceSneak()
+        {
             for (int radius = 4; radius < 8; radius++)
             {
-                EllipseGeometry elTailPart = new EllipseGeometry(new Point (0,0), radius, radius);
+                EllipseGeometry elTailPart = new EllipseGeometry(new Point(0, 0), radius, radius);
                 Path tailPart = new Path() { Data = elTailPart, Fill = Brushes.Green };
                 PlacePathToCanvas(cnSnakeBoard, tailPart, coordX, coordY);
                 coordY += snakePartsDistance;
@@ -55,11 +64,6 @@ namespace HadWPF
             cnSnakeBoard.Children.Remove(pFace);
             PlacePathToCanvas(cnSnakeBoard, pHead, coordX, coordY);
             PlacePathToCanvas(cnSnakeBoard, pFace, coordX, coordY);
-            PlaceFood(new Path[] {pStalk, pAppleLeft, pAppleRight});
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
-            timer.Tick += Timer_Tick;
-            timer.Start();
         }
         private void PlacePathToCanvas(Canvas? canvas, Path path, double left, double top)
         {
@@ -90,6 +94,12 @@ namespace HadWPF
 
         private void Timer_Tick(object? sender, EventArgs e)
         {
+            SneakMove();
+            RandomPlaceWrongFood(random.Next(1000));
+            CheckColisions();
+        }
+        private void SneakMove()
+        {
             coordX += (Math.Sin(angle * Math.PI / 180)) * snakePartsDistance;
             coordY += (Math.Cos(angle * Math.PI / 180)) * snakePartsDistance;
             Path movedPart;
@@ -101,11 +111,11 @@ namespace HadWPF
                     Canvas.SetTop(cnSnakeBoard.Children[i], Canvas.GetTop(cnSnakeBoard.Children[i + 1]));
                 }
                 movedPart = (Path)cnSnakeBoard.Children[tailPartsCount];
-                cnSnakeBoard.Children.Remove(movedPart);  
+                cnSnakeBoard.Children.Remove(movedPart);
             }
             else
             {
-                movedPart = new Path() {Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = snakePartStroke}; 
+                movedPart = new Path() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = snakePartStroke };
             }
             cnSnakeBoard.Children.Insert(cnSnakeBoard.Children.Count - headPartsCount, movedPart);
             PlacePathToCanvas(null, movedPart, Canvas.GetLeft(pHead), Canvas.GetTop(pHead));
@@ -120,8 +130,6 @@ namespace HadWPF
                 angle -= 10;
             }
             rtHead.Angle = rtFace.Angle = -angle;
-            RandomPlaceWrongFood(random.Next(1000));
-            CheckColisions();
         }
         private void RandomPlaceWrongFood(int wrongFoodSelector)
         {
@@ -143,11 +151,16 @@ namespace HadWPF
         }
         private void CheckColisions()
         {
+            CheckEndCollisions();
+            CheckAppleCollisions();
+        }
+        private void CheckEndCollisions()
+        {
             double distance;
-            double collisionDistance = snakePartRadius + snakePartStroke + snakeHeadRadius -1;
+            double collisionDistance = snakePartRadius + snakePartStroke + snakeHeadRadius - 1;
             for (int i = 0; i < cnSnakeBoard.Children.Count - 35; i++)
             {
-                distance = GetDistance(pHead,(Path)cnSnakeBoard.Children[i]);
+                distance = GetDistance(pHead, (Path)cnSnakeBoard.Children[i]);
                 if (distance < collisionDistance)
                 {
                     timer.Stop();
@@ -162,7 +175,21 @@ namespace HadWPF
                 MessageBox.Show("Narvals do pangejtu");
                 return;
             }
-            collisionDistance = snakeHeadRadius + foodRadius;
+            collisionDistance = snakeHeadRadius + stoneRadius;
+            for (int stoneIndex = 6; stoneIndex < cnAppleBoard.Children.Count; stoneIndex++)
+            {
+                distance = GetDistance(pHead, (Path)cnAppleBoard.Children[stoneIndex]);
+                if (distance < collisionDistance)
+                {
+                    timer.Stop();
+                    MessageBox.Show("Najebals šutr");
+                }
+            }
+        }
+        private void CheckAppleCollisions()
+        {
+            double distance;
+            double collisionDistance = snakeHeadRadius + foodRadius;
             distance = GetDistance(pHead, pAppleLeft);
             if (distance < collisionDistance)
             {
@@ -172,16 +199,6 @@ namespace HadWPF
             if (distance < collisionDistance)
             {
                 EatFood(-2);
-            }
-            collisionDistance = snakeHeadRadius + stoneRadius;
-            for (int stoneIndex = 6;  stoneIndex < cnAppleBoard.Children.Count; stoneIndex++)
-            {
-                distance = GetDistance(pHead, (Path)cnAppleBoard.Children[stoneIndex]);
-                if (distance < collisionDistance)
-                {
-                    timer.Stop();
-                    MessageBox.Show("Najebals šutr");
-                }
             }
         }
         private void EatFood(int point)
