@@ -29,7 +29,7 @@
                 </Path.Data>
             </Path>
             <Path x:Name="pWrongStalk" Canvas.Left="-20" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black"/>
-            <Path x:Name="pWrongAppleLeft" Fill="DarkGoldenrod" Canvas.Left="-20">
+            <Path x:Name="pWrongAppleLeft" Fill="DarkRed" Canvas.Left="-20">
                 <Path.RenderTransform>
                     <RotateTransform Angle="-10"/>
                 </Path.RenderTransform>
@@ -37,7 +37,7 @@
                     <EllipseGeometry Center="-2,0" RadiusX="5" RadiusY="6"/>
                 </Path.Data>
             </Path>
-            <Path x:Name="pWrongAppleRight" Fill="red" Canvas.Left="-20">
+            <Path x:Name="pWrongAppleRight" Fill="DarkGoldenrod" Canvas.Left="-20">
                 <Path.RenderTransform>
                     <RotateTransform Angle="10"/>
                 </Path.RenderTransform>

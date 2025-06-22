@@ -39,7 +39,7 @@ namespace HadWPF
             InitializeComponent();
             elBodyPart = new EllipseGeometry(new Point(0, 0), snakePartRadius, snakePartRadius);
             PlaceSneak();
-            PlaceFood(new Path[] {pStalk, pAppleLeft, pAppleRight});
+            PlaceItem(new Path[] {pStalk, pAppleLeft, pAppleRight}, foodRadius);
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
             timer.Tick += Timer_Tick;
@@ -75,20 +75,21 @@ namespace HadWPF
             Canvas.SetLeft(path, left);
             Canvas.SetTop(path, top);
         }
-        private void PlaceFood(Path[] foodParts)
+        private void PlaceItem(Path[] itemParts, int itemRadius)
         {
             double distance = 0;
-            double collisionDistance = snakeHeadRadius + foodRadius;
+            double collisionDistance = snakeHeadRadius + itemRadius;
             while (distance < collisionDistance)
             {
-                double foodCoordX = random.Next(10, (int)cnAppleBoard.Width - 10);
-                double foodCoordY = random.Next(10, (int)cnAppleBoard.Height - 10);
-                PlacePathToCanvas(null, foodParts[0], foodCoordX, foodCoordY);
-                PlacePathToCanvas(null, foodParts[1], foodCoordX, foodCoordY);
-                PlacePathToCanvas(null, foodParts[2], foodCoordX, foodCoordY);
+                double itemCoordX = random.Next(10, (int)cnAppleBoard.Width - 10);
+                double itemCoordY = random.Next(10, (int)cnAppleBoard.Height - 10);
+                for (int i = 0; i < itemParts.Length; i++)
+                {
+                    PlacePathToCanvas(null, itemParts[i], itemCoordX, itemCoordY);
+                }
                 foreach(Path snakePart in cnSnakeBoard.Children)
                 {
-                    if ((distance = GetDistance(pAppleLeft, snakePart)) < collisionDistance) break;
+                    if ((distance = GetDistance(itemParts[0], snakePart)) < collisionDistance) break;
                 }
             }
         }
@@ -136,7 +137,7 @@ namespace HadWPF
         {
             if (wrongFoodSelector < 3 && Canvas.GetLeft(pWrongAppleLeft) == -20)
             {
-                PlaceFood(new Path[] { pWrongStalk, pWrongAppleLeft, pWrongAppleRight });
+                PlaceItem(new Path[] { pWrongStalk, pWrongAppleLeft, pWrongAppleRight }, foodRadius);
             }
             else if (wrongFoodSelector > 3 && wrongFoodSelector < 5)
             {
@@ -148,7 +149,8 @@ namespace HadWPF
             EllipseGeometry elStone = new EllipseGeometry(new Point(0, 0), 11, 9);
             RotateTransform stoneRotate = new RotateTransform(random.Next(180));
             Path stone = new Path() { Data = elStone, Fill = Brushes.Gray, RenderTransform = stoneRotate };
-            PlacePathToCanvas(cnAppleBoard, stone, random.Next((int)cnAppleBoard.Width), random.Next((int)cnAppleBoard.Height));
+            cnAppleBoard.Children.Add(stone);
+            PlaceItem(new Path[] { stone }, stoneRadius);
         }
         private void CheckColisions()
         {
@@ -211,7 +213,7 @@ namespace HadWPF
             length += 10;
             if (point > 0)
             {
-                PlaceFood(new Path[] { pStalk, pAppleLeft, pAppleRight });
+                PlaceItem(new Path[] { pStalk, pAppleLeft, pAppleRight }, foodRadius);
             }
             else
             {
