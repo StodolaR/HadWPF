@@ -25,7 +25,7 @@ namespace HadWPF
         private const int stoneRadius = 10;
         private const int tailPartsCount = 4;
         private const int headPartsCount = 2;
-        private double coordX = 250;
+        private double coordX = 70;
         private double coordY = 10;
         private int angle = 0;
         private int score = 0;
@@ -44,7 +44,7 @@ namespace HadWPF
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
             timer.Tick += Timer_Tick;
-            timer.Start();
+            //timer.Start();
         }
         private void PlaceGrass()
         {
@@ -104,6 +104,20 @@ namespace HadWPF
             }
         }
 
+        private void window_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Space) return;
+            if (brdIntro.Visibility == Visibility.Visible)
+            {
+                BeginGame(brdIntro);
+            }
+        }
+        private void BeginGame(Border visibleBorder)
+        {
+            visibleBorder.Visibility = Visibility.Collapsed;
+            cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 1;
+            timer.Start();
+        }
         private void Timer_Tick(object? sender, EventArgs e)
         {
             SneakMove();

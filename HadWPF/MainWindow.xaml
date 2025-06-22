@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HadWPF"
         mc:Ignorable="d"
-        Title="MainWindow" SizeToContent="WidthAndHeight" x:Name="window">
+        Title="MainWindow" SizeToContent="WidthAndHeight" x:Name="window" ResizeMode="CanMinimize" KeyUp="window_KeyUp">
     <Grid>
         <Border BorderThickness="10" BorderBrush="Gray">
-            <Canvas x:Name="cnGrassBoard" Width="500" Height="500" Background="LightGreen"/>
+            <Canvas x:Name="cnGrassBoard" Width="500" Height="500" Background="LightGreen" Opacity="0.5"/>
         </Border>
-        <Canvas x:Name="cnAppleBoard" Width="500" Height="500">
+        <Canvas x:Name="cnAppleBoard" Width="500" Height="500" Opacity="0.5">
             <Path x:Name="pStalk" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black"/>
             <Path x:Name="pAppleLeft" Fill="red">
                 <Path.RenderTransform>
@@ -46,7 +46,7 @@
                 </Path.Data>
             </Path>
         </Canvas>
-        <Canvas x:Name="cnSnakeBoard" Width="500" Height="500">
+        <Canvas x:Name="cnSnakeBoard" Width="500" Height="500" Opacity="0.5">
             <Path x:Name="pHead" Fill="Green" Panel.ZIndex="1">
                 <Path.RenderTransform>
                     <RotateTransform x:Name="rtHead"/>
@@ -68,5 +68,20 @@
                 </Path.Data>
             </Path>
         </Canvas>
+        <Border x:Name="brdIntro" Width="500" Height="500">
+            <StackPanel>
+                <TextBlock Text="Had" FontSize="100" HorizontalAlignment="Center" FontFamily="Snap ITC" Foreground="DarkGreen" Margin=" 40"/>
+                <TextBlock TextWrapping="Wrap" Margin="50, 0" FontWeight="Bold" TextAlignment="Center">
+                    V zahradě ve stínu staré jabloně si had všiml na ohrazený trávník padajících jablíček a rozhodl se je posvačit.
+                    Proplazil se do ohrady a pustil se do nich... S každým jablíčkem trochu povyrostl, a také, protože mu chutnalo,
+                    plazil se za jablky čím dál tím rychleji. Jeho spokojenost se odráží ve vašem skore zobrazeném v titulku okna.
+                    Občas však ze stromu spadlo i jablko shnilé a to hadovi rozhodně nechutná - snězení jeho spokojenost a score sníží.
+                    Taky občas zahradník po hadovi hodí kámen, aby ho odehnal... Zahradník má naštěstí špatnou mušku, aby se trefil,
+                    ovšem když se had do ležícího kamene omylem zakousne, je to už důvod k ukončení svačiny - stejně jako nárazení do ohrady.
+                    Pomoz hadovi sesbírat co nejvíce jablek tak, že budeš směr jeho plazení ovládat šipkami vlevo a vpravo..
+                </TextBlock>
+                <TextBlock Text="Pro začátek hry stiskni SPACE..." FontSize="20" Margin="40" HorizontalAlignment="Center" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
