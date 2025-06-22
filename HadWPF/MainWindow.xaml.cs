@@ -38,12 +38,22 @@ namespace HadWPF
         {
             InitializeComponent();
             elBodyPart = new EllipseGeometry(new Point(0, 0), snakePartRadius, snakePartRadius);
+            PlaceGrass();
             PlaceSneak();
             PlaceItem(new Path[] {pStalk, pAppleLeft, pAppleRight}, foodRadius);
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
             timer.Tick += Timer_Tick;
             timer.Start();
+        }
+        private void PlaceGrass()
+        {
+            Geometry liGrass = Geometry.Parse("M 0 0 L 5 20 V 0 V 20 L 10 0");
+            for (int i = 0; i < 200; i++)
+            {
+                Path grass = new Path() { Data = liGrass, Stroke = Brushes.ForestGreen, StrokeThickness = 1 };
+                PlacePathToCanvas(cnGrassBoard, grass, random.Next((int)cnGrassBoard.Width), random.Next((int)cnGrassBoard.Height));
+            }
         }
         private void PlaceSneak()
         {
