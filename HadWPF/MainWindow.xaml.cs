@@ -29,12 +29,12 @@ namespace HadWPF
         private const int stoneRadius = 10;
         private const int tailPartsCount = 4;
         private const int headPartsCount = 2;
-        private double coordX = 70;
-        private double coordY = 10;
-        private int angle = 0;
-        private int score = 0;
-        private int length = 30;
-        private int speedInterval = 100;
+        private double coordX;
+        private double coordY;
+        private int angle;
+        private int score;
+        private int length;
+        private int speedInterval;
         private EllipseGeometry elBodyPart;
         private Random random = new Random();
         private DispatcherTimer timer;
@@ -47,10 +47,7 @@ namespace HadWPF
             SetHighscores();
             icRanking.ItemsSource = highscores;
             PlaceGrass();
-            PlaceSneak();
-            PlaceItem(new ShPath[] {pStalk, pAppleLeft, pAppleRight}, foodRadius);
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
             timer.Tick += Timer_Tick;
         }
         private void SetHighscores()
@@ -75,6 +72,7 @@ namespace HadWPF
             }
             if (highscoresLoaded == false) 
             {
+                highscores = new List<Highscore>();
                 for(int i = 0; i < 5; i++)
                 {
                     highscores.Add(new Highscore { Name = "Nikdo", Score = 0 });
@@ -92,6 +90,7 @@ namespace HadWPF
         }
         private void PlaceSneak()
         {
+            cnSnakeBoard.Children.Clear();
             for (int radius = 4; radius < 8; radius++)
             {
                 EllipseGeometry elTailPart = new EllipseGeometry(new Point(0, 0), radius, radius);
@@ -155,6 +154,17 @@ namespace HadWPF
                 {
                     BeginGame(brdHighscores);
                 }
+                else
+                {
+                    if(timer.IsEnabled)
+                    {
+                        timer.Stop(); 
+                    }
+                    else
+                    {
+                        timer.Start();
+                    }
+                }
             }
             if (e.Key == Key.Escape && brdHighscores.Visibility == Visibility.Visible)
             {
@@ -163,8 +173,24 @@ namespace HadWPF
         }
         private void BeginGame(Border visibleBorder)
         {
+            coordX = 250;
+            coordY = 10;
+            angle = 0;
+            score = 0;
+            window.Title = "Score: " + score;
+            length = 30;
+            speedInterval = 100;
+            for(int i = 3; i < 6 ; i++)
+            {
+                PlacePathToCanvas(null, (ShPath)cnAppleBoard.Children[i], -20, 0);
+            }
+            cnAppleBoard.Children.RemoveRange(6, cnAppleBoard.Children.Count - 6);
+            PlacePathToCanvas(null, pShadow, -random.Next(250), -random.Next(150));
+            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
             visibleBorder.Visibility = Visibility.Collapsed;
             cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 1;
+            PlaceSneak();
+            PlaceItem(new ShPath[] { pStalk, pAppleLeft, pAppleRight }, foodRadius);
             timer.Start();
         }
         private void EditAndShowHighscores()
@@ -176,6 +202,7 @@ namespace HadWPF
                     highscores.Insert(i, new Highscore { Name = tbxWinnerName.Text, Score = score });
                     highscores.RemoveAt(5);
                     SaveHighscores();
+                    spNewHighscore.Visibility = Visibility.Collapsed;
                     break;
                 }
             }
@@ -243,7 +270,7 @@ namespace HadWPF
             {
                 PlaceItem(new ShPath[] { pWrongStalk, pWrongAppleLeft, pWrongAppleRight }, foodRadius);
             }
-            else if (wrongFoodSelector > 3 && wrongFoodSelector < 5)
+            else if (wrongFoodSelector > 3 && wrongFoodSelector < 6)
             {
                 PlaceStone();
             }
@@ -271,7 +298,7 @@ namespace HadWPF
         {
             tbScore.Text = score.ToString();
             tbxWinnerName.Text = "Hráč1";
-            cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 0.5;
+            cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 0.3;
             tbIsHighscore.Text = "Bohužel toto skóre nepatří k nejlepším";
             brdOutro.Visibility = Visibility.Visible;
             if (highscores.Any(x => x.Score < score))

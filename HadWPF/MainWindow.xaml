@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HadWPF"
         mc:Ignorable="d"
-        Title="MainWindow" SizeToContent="WidthAndHeight" x:Name="window" ResizeMode="CanMinimize" KeyUp="window_KeyUp">
+        Title="HadWPF" SizeToContent="WidthAndHeight" x:Name="window" ResizeMode="CanMinimize" KeyUp="window_KeyUp">
     <Grid>
         <Grid.Resources>
             <Style TargetType="TextBlock">
@@ -16,8 +16,8 @@
             <Canvas x:Name="cnGrassBoard" Width="500" Height="500" Background="LightGreen" Opacity="0.5"/>
         </Border>
         <Canvas x:Name="cnAppleBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}" Opacity="0.5">
-            <Path x:Name="pStalk" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black"/>
-            <Path x:Name="pAppleLeft" Fill="red">
+            <Path x:Name="pStalk" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black" Canvas.Left="-40"/>
+            <Path x:Name="pAppleLeft" Fill="red" Canvas.Left="-40">
                 <Path.RenderTransform>
                     <RotateTransform Angle="-10"/>
                 </Path.RenderTransform>
@@ -25,7 +25,7 @@
                     <EllipseGeometry Center="-2,0" RadiusX="5" RadiusY="6"/>
                 </Path.Data>
             </Path>
-            <Path x:Name="pAppleRight" Fill="red">
+            <Path x:Name="pAppleRight" Fill="red" Canvas.Left="-40">
                 <Path.RenderTransform>
                     <RotateTransform Angle="10"/>
                 </Path.RenderTransform>
@@ -52,7 +52,7 @@
             </Path>
         </Canvas>
         <Canvas x:Name="cnSnakeBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}" Opacity="0.5">
-            <Path x:Name="pHead" Fill="Green" Panel.ZIndex="1">
+            <Path x:Name="pHead" Fill="Green" Panel.ZIndex="1" Canvas.Left="-60">
                 <Path.RenderTransform>
                     <RotateTransform x:Name="rtHead"/>
                 </Path.RenderTransform>
@@ -60,7 +60,7 @@
                     <EllipseGeometry Center="0,-2" RadiusX="10" RadiusY="13"/>
                 </Path.Data>
             </Path>
-            <Path x:Name="pFace" Fill="Black" Panel.ZIndex="1">
+            <Path x:Name="pFace" Fill="Black" Panel.ZIndex="1" Canvas.Left="-60">
                 <Path.RenderTransform>
                     <RotateTransform x:Name="rtFace"/>
                 </Path.RenderTransform>
@@ -73,6 +73,9 @@
                 </Path.Data>
             </Path>
         </Canvas>
+        <Canvas x:Name="cnShadowBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}">
+            <Path x:Name="pShadow" Data="M 0 0 V 300 A 110 90 -10 0 0 100 270 A 110 90 -10 0 0 200 230 A 110 90 -10 0 0 300 170 A 110 90 -10 0 0 400 90 A 110 90 -10 0 0 500 0 Z" Fill="Black" Opacity="0.4"/>
+        </Canvas>
         <Border x:Name="brdIntro" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Visibility="Visible">
             <StackPanel>
                 <TextBlock Text="Had" FontSize="100" FontFamily="Snap ITC" Foreground="DarkGreen" Margin=" 40"/>
@@ -80,7 +83,7 @@
                     V zahradě ve stínu staré jabloně si had všiml na ohrazený trávník padajících jablíček a rozhodl se je posvačit.
                     Proplazil se do ohrady a pustil se do nich... S každým jablíčkem trochu povyrostl, a také, protože mu chutnalo,
                     plazil se za jablky čím dál tím rychleji. Jeho spokojenost se odráží ve vašem skore zobrazeném v titulku okna.
-                    Občas však ze stromu spadlo i jablko shnilé a to hadovi rozhodně nechutná - snězení jeho spokojenost a score sníží.
+                    Občas však ze stromu spadne i jablko shnilé a to hadovi rozhodně nechutná - snězení jeho spokojenost a score sníží.
                     Taky občas zahradník po hadovi hodí kámen, aby ho odehnal... Zahradník má naštěstí špatnou mušku, aby se trefil,
                     ovšem když se had do ležícího kamene omylem zakousne, je to už důvod k ukončení svačiny - stejně jako nárazení do ohrady.
                     Pomoz hadovi sesbírat co nejvíce jablek tak, že budeš směr jeho plazení ovládat šipkami vlevo a vpravo..
