@@ -7,10 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" SizeToContent="WidthAndHeight" x:Name="window" ResizeMode="CanMinimize" KeyUp="window_KeyUp">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+            </Style>
+        </Grid.Resources>
         <Border BorderThickness="10" BorderBrush="Gray">
             <Canvas x:Name="cnGrassBoard" Width="500" Height="500" Background="LightGreen" Opacity="0.5"/>
         </Border>
-        <Canvas x:Name="cnAppleBoard" Width="500" Height="500" Opacity="0.5">
+        <Canvas x:Name="cnAppleBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}" Opacity="0.5">
             <Path x:Name="pStalk" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black"/>
             <Path x:Name="pAppleLeft" Fill="red">
                 <Path.RenderTransform>
@@ -46,7 +51,7 @@
                 </Path.Data>
             </Path>
         </Canvas>
-        <Canvas x:Name="cnSnakeBoard" Width="500" Height="500" Opacity="0.5">
+        <Canvas x:Name="cnSnakeBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}" Opacity="0.5">
             <Path x:Name="pHead" Fill="Green" Panel.ZIndex="1">
                 <Path.RenderTransform>
                     <RotateTransform x:Name="rtHead"/>
@@ -68,9 +73,9 @@
                 </Path.Data>
             </Path>
         </Canvas>
-        <Border x:Name="brdIntro" Width="500" Height="500">
+        <Border x:Name="brdIntro" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Visibility="Visible">
             <StackPanel>
-                <TextBlock Text="Had" FontSize="100" HorizontalAlignment="Center" FontFamily="Snap ITC" Foreground="DarkGreen" Margin=" 40"/>
+                <TextBlock Text="Had" FontSize="100" FontFamily="Snap ITC" Foreground="DarkGreen" Margin=" 40"/>
                 <TextBlock TextWrapping="Wrap" Margin="50, 0" FontWeight="Bold" TextAlignment="Center">
                     V zahradě ve stínu staré jabloně si had všiml na ohrazený trávník padajících jablíček a rozhodl se je posvačit.
                     Proplazil se do ohrady a pustil se do nich... S každým jablíčkem trochu povyrostl, a také, protože mu chutnalo,
@@ -80,7 +85,50 @@
                     ovšem když se had do ležícího kamene omylem zakousne, je to už důvod k ukončení svačiny - stejně jako nárazení do ohrady.
                     Pomoz hadovi sesbírat co nejvíce jablek tak, že budeš směr jeho plazení ovládat šipkami vlevo a vpravo..
                 </TextBlock>
-                <TextBlock Text="Pro začátek hry stiskni SPACE..." FontSize="20" Margin="40" HorizontalAlignment="Center" Foreground="Red" FontWeight="Bold"/>
+                <TextBlock Text="Pro začátek hry stiskni SPACE..." FontSize="20" Margin="40" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+        </Border>
+        <Border x:Name="brdOutro" Visibility="Collapsed" Width="{Binding ElementName=cnGrassBoard, Path=Width}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="tbEndReason" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="Bold" Margin="50,0"/>
+                <TextBlock Text="Tvé skóre je:" FontSize="20" Grid.Row="1" VerticalAlignment="Bottom"/>
+                <TextBlock x:Name="tbScore" Text="0" Foreground="Red" FontSize="60" FontWeight="Bold" Grid.Row="2"/>
+                <TextBlock x:Name="tbIsHighscore" FontSize="20" Grid.Row="3" VerticalAlignment="Center"/>
+                <StackPanel x:Name="spNewHighscore" Visibility="Collapsed" Grid.Row="4">
+                    <TextBlock Text="Zadej jméno pro zápis do Síně slávy:" FontSize="20" FontWeight="Bold" Margin="30"/>
+                    <TextBox x:Name="tbxWinnerName" Text="Hráč1" Width="200" FontSize="30" FontWeight="Bold" TextAlignment="Center" 
+                             GotFocus="tbxWinnerName_GotFocus"/>
+                </StackPanel>
+                <TextBlock Text="Pro pokračování stiskni SPACE" FontSize="20" Margin="40" Foreground="Red" FontWeight="Bold" Grid.Row="5"/>
+            </Grid>
+        </Border>
+        <Border x:Name="brdHighscores" Visibility="Collapsed">
+            <StackPanel>
+                <TextBlock Margin="0,60,0,0" Text="Síň slávy" Foreground="Red" FontSize="60" FontFamily="Broadway"/>
+                <Border BorderBrush="DarkGreen" BorderThickness="2" Margin="50, 40">
+                    <ItemsControl x:Name="icRanking">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="DarkGreen" BorderThickness="1">
+                                    <Grid>
+                                        <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" Margin="10" Height="25"/>
+                                        <TextBlock Text="{Binding Score}" HorizontalAlignment="Right" FontSize="20" FontWeight="Bold" Margin="10" Height="25"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+                <TextBlock Text="Pro začátek nové hry stiskni SPACE..." FontSize="20" Foreground="Red" FontWeight="Bold"/>
+                <TextBlock Text="(pro ukončení hry stiskni ESCAPE...)" FontSize="15" Foreground="Red" FontWeight="Bold"/>
             </StackPanel>
         </Border>
     </Grid>
