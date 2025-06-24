@@ -168,7 +168,7 @@ namespace HadWPF
         }
         private void window_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Space)
+            if (e.Key == Key.Space && spNewHighscore.Visibility == Visibility.Collapsed)
             {
                 if (brdIntro.Visibility == Visibility.Visible)
                 {
@@ -176,7 +176,7 @@ namespace HadWPF
                 }
                 else if (brdOutro.Visibility == Visibility.Visible)
                 {
-                    EditAndShowHighscores();
+                    ShowHighscores();
                 }
                 else if (brdHighscores.Visibility == Visibility.Visible)
                 {
@@ -194,26 +194,15 @@ namespace HadWPF
                     }
                 }
             }
-            if (e.Key == Key.Escape && brdHighscores.Visibility == Visibility.Visible)
+            else if (e.Key == Key.Escape && brdHighscores.Visibility == Visibility.Visible)
             {
                 window.Close();
             }
         }
-        private void EditAndShowHighscores()
+        private void ShowHighscores()
         {
-            for (int i = 0; i < highscores.Count; i++)
-            {
-                if (score > highscores[i].Score)
-                {
-                    highscores.Insert(i, new Highscore { Name = tbxWinnerName.Text, Score = score });
-                    highscores.RemoveAt(5);
-                    SaveHighscores();
-                    spNewHighscore.Visibility = Visibility.Collapsed;
-                    break;
-                }
-            }
             brdOutro.Visibility = Visibility.Collapsed;
-            icRanking.ItemsSource = highscores;
+            icRanking.Items.Refresh();
             brdHighscores.Visibility = Visibility.Visible;
         }
         private void SaveHighscores()
@@ -339,7 +328,7 @@ namespace HadWPF
         private string CheckEndCollisions()
         {
             double distance;
-            double collisionDistance = snakePartRadius + snakePartStroke + snakeHeadRadius - 1;
+            double collisionDistance = snakePartRadius + snakePartStroke + snakeHeadRadius - 2;
             string endString = "Auu... tak po tomhle už hada zcela přešla chuť na jablíčka a odplazil se raději do bezpečí.";
             for (int i = 0; i < cnSnakeBoard.Children.Count - 35; i++)
             {
@@ -368,19 +357,31 @@ namespace HadWPF
         private void FinishGame()
         {
             tbScore.Text = score.ToString();
-            tbxWinnerName.Text = "Hráč1";
             cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 0.3;
-            tbIsHighscore.Text = "Bohužel toto skóre nepatří k nejlepším";
             brdOutro.Visibility = Visibility.Visible;
             if (highscores.Any(x => x.Score < score))
             {
-                tbIsHighscore.Text = "Dosáhl jsi jednoho z nejlepších výsledků";
+                spWithoutHighscore.Visibility = Visibility.Collapsed;
                 spNewHighscore.Visibility = Visibility.Visible;
+                tbxWinnerName.Focus();
             }
         }
-        private void tbxWinnerName_GotFocus(object sender, RoutedEventArgs e)
+        private void btnSaveHighscore_Click(object sender, RoutedEventArgs e)
         {
-            tbxWinnerName.Text = string.Empty;
-        }
+            if (tbxWinnerName.Text == string.Empty) return;
+            for (int i = 0; i < highscores.Count; i++)
+            {
+                if (score > highscores[i].Score)
+                {
+                    highscores.Insert(i, new Highscore { Name = tbxWinnerName.Text, Score = score });
+                    highscores.RemoveAt(5);
+                    SaveHighscores();
+                    break;
+                }
+            }
+            spWithoutHighscore.Visibility = Visibility.Visible;
+            spNewHighscore.Visibility = Visibility.Collapsed;
+            ShowHighscores();
+        } 
     }
 }

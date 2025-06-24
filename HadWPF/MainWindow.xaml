@@ -93,7 +93,8 @@
                     ovšem když se had do ležícího kamene omylem zakousne, je to už důvod k ukončení svačiny - stejně jako naražení do ohrady.
                     Pomoz hadovi sesbírat co nejvíce jablek tak, že budeš směr jeho plazení ovládat šipkami vlevo a vpravo..
                 </TextBlock>
-                <TextBlock Text="Pro začátek hry stiskni SPACE..." Margin="40" Foreground="Red" FontWeight="Bold"/>
+                <TextBlock Text="Pro začátek hry stiskni SPACE..." Margin="0,40,0,0" Foreground="Red" FontWeight="Bold"/>
+                <TextBlock Text="(Ve hře lze SPACE použít pro její pozastavení...)" Foreground="Red" FontWeight="Bold" FontSize="15"/>
             </StackPanel>
         </Border>
         <Border x:Name="brdOutro" Visibility="Collapsed" Width="{StaticResource boardSize}">
@@ -102,26 +103,29 @@
                     <RowDefinition Height="2*"/>
                     <RowDefinition/>
                     <RowDefinition Height="2*"/>
-                    <RowDefinition/>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock x:Name="tbEndReason" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="Bold" Margin="50,0" FontSize="12"/>
                 <TextBlock Text="Tvé skóre je:" Grid.Row="1" VerticalAlignment="Bottom"/>
                 <TextBlock x:Name="tbScore" Text="0" Foreground="Red" FontSize="60" FontWeight="Bold" Grid.Row="2"/>
-                <TextBlock x:Name="tbIsHighscore" Grid.Row="3" VerticalAlignment="Center"/>
-                <StackPanel x:Name="spNewHighscore" Visibility="Collapsed" Grid.Row="4">
-                    <TextBlock Text="Zadej jméno pro zápis do Síně slávy:" FontWeight="Bold" Margin="30"/>
-                    <TextBox x:Name="tbxWinnerName" Text="Hráč1" Width="200" FontSize="30" FontWeight="Bold" TextAlignment="Center" 
-                             GotFocus="tbxWinnerName_GotFocus"/>
+                <StackPanel x:Name="spWithoutHighscore" Visibility="Visible" Grid.Row="3">
+                    <TextBlock Grid.Row="3" VerticalAlignment="Center" Text = "Bohužel toto skóre nepatří k nejlepším" Margin="20"/>
+                    <TextBlock Text="Pro pokračování stiskni SPACE" Margin="0,0,0,40" Foreground="Red" FontWeight="Bold"/>
                 </StackPanel>
-                <TextBlock Text="Pro pokračování stiskni SPACE" Margin="40" Foreground="Red" FontWeight="Bold" Grid.Row="5"/>
+                <StackPanel x:Name="spNewHighscore" Visibility="Collapsed" Grid.Row="3">
+                    <TextBlock Text = "Dosáhl jsi jednoho z nejlepších výsledků" Margin="20"/>
+                    <TextBlock Text="Zadej jméno pro zápis do Síně slávy:" FontWeight="Bold" Margin="30"/>
+                    <TextBox x:Name="tbxWinnerName" Width="300" FontSize="30" FontWeight="Bold" TextAlignment="Center"  MaxLength="15"/>
+                    <Button x:Name="btnSaveHighscore" Content="Ulož výsledek do tabulky" Margin="0,0,0,40" FontSize="20" 
+                            FontWeight="Bold" Width="300" Click="btnSaveHighscore_Click" IsDefault="True"/>
+                </StackPanel>
+                
             </Grid>
         </Border>
         <Border x:Name="brdHighscores" Visibility="Collapsed">
             <StackPanel>
-                <TextBlock Margin="0,60,0,0" Text="Síň slávy" Foreground="Red" FontSize="60" FontFamily="Broadway"/>
-                <Border BorderBrush="DarkGreen" BorderThickness="2" Margin="50, 40">
+                <TextBlock Margin="0,50,0,0" Text="Síň slávy" Foreground="Red" FontSize="60" FontFamily="Broadway"/>
+                <Border BorderBrush="DarkGreen" BorderThickness="2" Margin="50, 30">
                     <ItemsControl x:Name="icRanking">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
