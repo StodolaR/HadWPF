@@ -158,6 +158,13 @@ namespace HadWPF
                 {
                     if ((distance = GetDistance(itemParts[0], snakePart)) < collisionDistance) break;
                 }
+                if (distance > collisionDistance && itemParts[0] == pStalk)
+                {
+                    for(int stoneIndex = 6; stoneIndex < cnAppleBoard.Children.Count; stoneIndex++)
+                    {
+                        if((distance = GetDistance(itemParts[0], (ShPath)cnAppleBoard.Children[stoneIndex])) < collisionDistance) break;
+                    }
+                }
             }
         }
         private double GetDistance(ShPath item1, ShPath Item2)
