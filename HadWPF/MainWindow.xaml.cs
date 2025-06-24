@@ -29,6 +29,7 @@ namespace HadWPF
         private const int stoneRadius = 10;
         private const int tailPartsCount = 4;
         private const int headPartsCount = 2;
+        private const int minSpeedInterval = 40;
         private double coordX;
         private double coordY;
         private int angle;
@@ -36,7 +37,7 @@ namespace HadWPF
         private int length;
         private int speedInterval;
         private EllipseGeometry elBodyPart;
-        private Random random = new Random();
+        private Random random;
         private DispatcherTimer timer;
         private List<Highscore> highscores;
         public MainWindow()
@@ -44,11 +45,21 @@ namespace HadWPF
             InitializeComponent();
             elBodyPart = new EllipseGeometry(new Point(0, 0), snakePartRadius, snakePartRadius);
             highscores = new List<Highscore>();
-            SetHighscores();
-            icRanking.ItemsSource = highscores;
-            PlaceGrass();
+            random = new Random();
             timer = new DispatcherTimer();
             timer.Tick += Timer_Tick;
+            PlaceGrass();
+            SetHighscores();
+            icRanking.ItemsSource = highscores;
+        }
+        private void PlaceGrass()
+        {
+            Geometry liGrass = Geometry.Parse("M 0 0 L 5 20 V 0 V 20 L 10 0");
+            for (int i = 0; i < 200; i++)
+            {
+                ShPath grass = new ShPath() { Data = liGrass, Stroke = Brushes.ForestGreen, StrokeThickness = 1 };
+                PlacePathToCanvas(cnGrassBoard, grass, random.Next((int)cnGrassBoard.Width), random.Next((int)cnGrassBoard.Height));
+            }
         }
         private void SetHighscores()
         {
@@ -79,14 +90,36 @@ namespace HadWPF
                 }
             }
         }
-        private void PlaceGrass()
+        private void BeginGame(Border visibleBorder)
         {
-            Geometry liGrass = Geometry.Parse("M 0 0 L 5 20 V 0 V 20 L 10 0");
-            for (int i = 0; i < 200; i++)
+            coordX = 250;
+            coordY = 10;
+            angle = 0;
+            score = 0;
+            window.Title = "Score: " + score;
+            length = 30;
+            speedInterval = 100;
+            for (int i = 3; i < 6; i++)
             {
-                ShPath grass = new ShPath() { Data = liGrass, Stroke = Brushes.ForestGreen, StrokeThickness = 1 };
-                PlacePathToCanvas(cnGrassBoard, grass, random.Next((int)cnGrassBoard.Width), random.Next((int)cnGrassBoard.Height));
+                PlacePathToCanvas(null, (ShPath)cnAppleBoard.Children[i], -20, 0);
             }
+            cnAppleBoard.Children.RemoveRange(6, cnAppleBoard.Children.Count - 6);
+            PlacePathToCanvas(null, pShadow, -random.Next(250), -random.Next(150));
+            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
+            visibleBorder.Visibility = Visibility.Collapsed;
+            cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 1;
+            PlaceSneak();
+            PlaceItem(new ShPath[] { pStalk, pAppleLeft, pAppleRight }, foodRadius);
+            timer.Start();
+        }
+        private void PlacePathToCanvas(Canvas? canvas, ShPath path, double left, double top)
+        {
+            if (canvas != null)
+            {
+                canvas.Children.Add(path);
+            }
+            Canvas.SetLeft(path, left);
+            Canvas.SetTop(path, top);
         }
         private void PlaceSneak()
         {
@@ -98,7 +131,6 @@ namespace HadWPF
                 PlacePathToCanvas(cnSnakeBoard, tailPart, coordX, coordY);
                 coordY += snakePartsDistance;
             }
-            elBodyPart = new EllipseGeometry(new Point(0, 0), snakePartRadius, snakePartRadius);
             for (int i = 0; i < length - headPartsCount - tailPartsCount; i++)
             {
                 ShPath bodyPart = new ShPath() { Data = elBodyPart, Fill = Brushes.Brown, Stroke = Brushes.Green, StrokeThickness = snakePartStroke };
@@ -109,15 +141,6 @@ namespace HadWPF
             cnSnakeBoard.Children.Remove(pFace);
             PlacePathToCanvas(cnSnakeBoard, pHead, coordX, coordY);
             PlacePathToCanvas(cnSnakeBoard, pFace, coordX, coordY);
-        }
-        private void PlacePathToCanvas(Canvas? canvas, ShPath path, double left, double top)
-        {
-            if (canvas != null)
-            {
-                canvas.Children.Add(path);
-            }
-            Canvas.SetLeft(path, left);
-            Canvas.SetTop(path, top);
         }
         private void PlaceItem(ShPath[] itemParts, int itemRadius)
         {
@@ -137,7 +160,12 @@ namespace HadWPF
                 }
             }
         }
-
+        private double GetDistance(ShPath item1, ShPath Item2)
+        {
+            double distanceX = Canvas.GetLeft(item1) - Canvas.GetLeft(Item2);
+            double distanceY = Canvas.GetTop(item1) - Canvas.GetTop(Item2);
+            return Math.Sqrt(distanceX * distanceX + distanceY * distanceY);
+        }
         private void window_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
@@ -170,28 +198,6 @@ namespace HadWPF
             {
                 window.Close();
             }
-        }
-        private void BeginGame(Border visibleBorder)
-        {
-            coordX = 250;
-            coordY = 10;
-            angle = 0;
-            score = 0;
-            window.Title = "Score: " + score;
-            length = 30;
-            speedInterval = 100;
-            for(int i = 3; i < 6 ; i++)
-            {
-                PlacePathToCanvas(null, (ShPath)cnAppleBoard.Children[i], -20, 0);
-            }
-            cnAppleBoard.Children.RemoveRange(6, cnAppleBoard.Children.Count - 6);
-            PlacePathToCanvas(null, pShadow, -random.Next(250), -random.Next(150));
-            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
-            visibleBorder.Visibility = Visibility.Collapsed;
-            cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 1;
-            PlaceSneak();
-            PlaceItem(new ShPath[] { pStalk, pAppleLeft, pAppleRight }, foodRadius);
-            timer.Start();
         }
         private void EditAndShowHighscores()
         {
@@ -294,22 +300,41 @@ namespace HadWPF
                 FinishGame();
             }
         }
-        private void FinishGame()
+        private void CheckAppleCollisions()
         {
-            tbScore.Text = score.ToString();
-            tbxWinnerName.Text = "Hráč1";
-            cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 0.3;
-            tbIsHighscore.Text = "Bohužel toto skóre nepatří k nejlepším";
-            brdOutro.Visibility = Visibility.Visible;
-            if (highscores.Any(x => x.Score < score))
+            double distance;
+            double collisionDistance = snakeHeadRadius + foodRadius;
+            distance = GetDistance(pHead, pAppleLeft);
+            if (distance < collisionDistance)
             {
-                tbIsHighscore.Text = "Dosáhl jsi jednoho z nejlepších výsledků";
-                spNewHighscore.Visibility = Visibility.Visible;
+                EatFood(1);
+            }
+            distance = GetDistance(pHead, pWrongAppleLeft);
+            if (distance < collisionDistance)
+            {
+                EatFood(-5);
             }
         }
-        private void tbxWinnerName_GotFocus(object sender, RoutedEventArgs e)
+        private void EatFood(int point)
         {
-            tbxWinnerName.Text = string.Empty;
+            score += point;
+            window.Title = "Score: " + score;
+            if (speedInterval > minSpeedInterval)
+            {
+                speedInterval -= 2;
+            }
+            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
+            length += 10;
+            if (point > 0)
+            {
+                PlaceItem(new ShPath[] { pStalk, pAppleLeft, pAppleRight }, foodRadius);
+            }
+            else
+            {
+                PlacePathToCanvas(null, pWrongStalk, -20, 0);
+                PlacePathToCanvas(null, pWrongAppleLeft, -20, 0);
+                PlacePathToCanvas(null, pWrongAppleRight, -20, 0);
+            }
         }
         private string CheckEndCollisions()
         {
@@ -340,44 +365,22 @@ namespace HadWPF
             }
             return string.Empty;
         }
-        private void CheckAppleCollisions()
+        private void FinishGame()
         {
-            double distance;
-            double collisionDistance = snakeHeadRadius + foodRadius;
-            distance = GetDistance(pHead, pAppleLeft);
-            if (distance < collisionDistance)
+            tbScore.Text = score.ToString();
+            tbxWinnerName.Text = "Hráč1";
+            cnGrassBoard.Opacity = cnSnakeBoard.Opacity = cnAppleBoard.Opacity = 0.3;
+            tbIsHighscore.Text = "Bohužel toto skóre nepatří k nejlepším";
+            brdOutro.Visibility = Visibility.Visible;
+            if (highscores.Any(x => x.Score < score))
             {
-                EatFood(1);
-            }
-            distance = GetDistance(pHead, pWrongAppleLeft);
-            if (distance < collisionDistance)
-            {
-                EatFood(-5);
+                tbIsHighscore.Text = "Dosáhl jsi jednoho z nejlepších výsledků";
+                spNewHighscore.Visibility = Visibility.Visible;
             }
         }
-        private void EatFood(int point)
+        private void tbxWinnerName_GotFocus(object sender, RoutedEventArgs e)
         {
-            score += point;
-            speedInterval -= 2;
-            timer.Interval = TimeSpan.FromMilliseconds(speedInterval);
-            window.Title = "Score: " + score;
-            length += 10;
-            if (point > 0)
-            {
-                PlaceItem(new ShPath[] { pStalk, pAppleLeft, pAppleRight }, foodRadius);
-            }
-            else
-            {
-                PlacePathToCanvas(null, pWrongStalk, -20, 0);
-                PlacePathToCanvas(null, pWrongAppleLeft, -20, 0);
-                PlacePathToCanvas(null, pWrongAppleRight, -20, 0);
-            }
-        }
-        private double GetDistance(ShPath item1, ShPath Item2)
-        {
-            double distanceX = Canvas.GetLeft(item1) - Canvas.GetLeft(Item2);
-            double distanceY = Canvas.GetTop(item1) - Canvas.GetTop(Item2);
-            return Math.Sqrt(distanceX * distanceX + distanceY * distanceY);
+            tbxWinnerName.Text = string.Empty;
         }
     }
 }

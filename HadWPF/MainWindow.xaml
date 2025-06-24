@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:core="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:HadWPF"
         mc:Ignorable="d"
         Title="HadWPF" SizeToContent="WidthAndHeight" x:Name="window" ResizeMode="CanMinimize" KeyUp="window_KeyUp">
@@ -10,12 +11,15 @@
         <Grid.Resources>
             <Style TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="20"/>
             </Style>
+            <core:Double x:Key="boardSize">500</core:Double>
         </Grid.Resources>
         <Border BorderThickness="10" BorderBrush="Gray">
-            <Canvas x:Name="cnGrassBoard" Width="500" Height="500" Background="LightGreen" Opacity="0.5"/>
+            <Canvas x:Name="cnGrassBoard" Width="{StaticResource boardSize}" Height="{StaticResource boardSize}" 
+                    Background="LightGreen" Opacity="0.5"/>
         </Border>
-        <Canvas x:Name="cnAppleBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}" Opacity="0.5">
+        <Canvas x:Name="cnAppleBoard" Width="{StaticResource boardSize}" Height="{StaticResource boardSize}" Opacity="0.5">
             <Path x:Name="pStalk" Data="M 0 -8 L 0 -5" StrokeThickness="1" Stroke="Black" Canvas.Left="-40"/>
             <Path x:Name="pAppleLeft" Fill="red" Canvas.Left="-40">
                 <Path.RenderTransform>
@@ -51,7 +55,7 @@
                 </Path.Data>
             </Path>
         </Canvas>
-        <Canvas x:Name="cnSnakeBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}" Opacity="0.5">
+        <Canvas x:Name="cnSnakeBoard" Width="{StaticResource boardSize}" Height="{StaticResource boardSize}" Opacity="0.5">
             <Path x:Name="pHead" Fill="Green" Panel.ZIndex="1" Canvas.Left="-60">
                 <Path.RenderTransform>
                     <RotateTransform x:Name="rtHead"/>
@@ -73,25 +77,26 @@
                 </Path.Data>
             </Path>
         </Canvas>
-        <Canvas x:Name="cnShadowBoard" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Height="{Binding ElementName=cnGrassBoard, Path=Height}">
-            <Path x:Name="pShadow" Data="M 0 0 V 300 A 110 90 -10 0 0 100 270 A 110 90 -10 0 0 200 230 A 110 90 -10 0 0 300 170 A 110 90 -10 0 0 400 90 A 110 90 -10 0 0 500 0 Z" Fill="Black" Opacity="0.4"/>
+        <Canvas x:Name="cnShadowBoard" Width="{StaticResource boardSize}" Height="{StaticResource boardSize}">
+            <Path Data="M 0 0 V 300 A 110 90 -10 0 0 100 270 A 110 90 -10 0 0 200 230 A 110 90 -10 0 0 300 170 A 110 90 -10 0 0 400 90 A 110 90 -10 0 0 500 0 Z" 
+                  x:Name="pShadow" Fill="Black" Opacity="0.4"/>
         </Canvas>
-        <Border x:Name="brdIntro" Width="{Binding ElementName=cnGrassBoard, Path=Width}" Visibility="Visible">
+        <Border x:Name="brdIntro" Width="{StaticResource boardSize}" Visibility="Visible">
             <StackPanel>
-                <TextBlock Text="Had" FontSize="100" FontFamily="Snap ITC" Foreground="DarkGreen" Margin=" 40"/>
-                <TextBlock TextWrapping="Wrap" Margin="50, 0" FontWeight="Bold" TextAlignment="Center">
+                <TextBlock Text="Had" FontSize="100" FontFamily="Snap ITC" Foreground="DarkGreen" Margin="40"/>
+                <TextBlock TextWrapping="Wrap" Margin="50, 0" FontWeight="Bold" TextAlignment="Center" FontSize="12">
                     V zahradě ve stínu staré jabloně si had všiml na ohrazený trávník padajících jablíček a rozhodl se je posvačit.
                     Proplazil se do ohrady a pustil se do nich... S každým jablíčkem trochu povyrostl, a také, protože mu chutnalo,
                     plazil se za jablky čím dál tím rychleji. Jeho spokojenost se odráží ve vašem skore zobrazeném v titulku okna.
                     Občas však ze stromu spadne i jablko shnilé a to hadovi rozhodně nechutná - snězení jeho spokojenost a score sníží.
                     Taky občas zahradník po hadovi hodí kámen, aby ho odehnal... Zahradník má naštěstí špatnou mušku, aby se trefil,
-                    ovšem když se had do ležícího kamene omylem zakousne, je to už důvod k ukončení svačiny - stejně jako nárazení do ohrady.
+                    ovšem když se had do ležícího kamene omylem zakousne, je to už důvod k ukončení svačiny - stejně jako naražení do ohrady.
                     Pomoz hadovi sesbírat co nejvíce jablek tak, že budeš směr jeho plazení ovládat šipkami vlevo a vpravo..
                 </TextBlock>
-                <TextBlock Text="Pro začátek hry stiskni SPACE..." FontSize="20" Margin="40" Foreground="Red" FontWeight="Bold"/>
+                <TextBlock Text="Pro začátek hry stiskni SPACE..." Margin="40" Foreground="Red" FontWeight="Bold"/>
             </StackPanel>
         </Border>
-        <Border x:Name="brdOutro" Visibility="Collapsed" Width="{Binding ElementName=cnGrassBoard, Path=Width}">
+        <Border x:Name="brdOutro" Visibility="Collapsed" Width="{StaticResource boardSize}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
@@ -101,16 +106,16 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock x:Name="tbEndReason" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="Bold" Margin="50,0"/>
-                <TextBlock Text="Tvé skóre je:" FontSize="20" Grid.Row="1" VerticalAlignment="Bottom"/>
+                <TextBlock x:Name="tbEndReason" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="Bold" Margin="50,0" FontSize="12"/>
+                <TextBlock Text="Tvé skóre je:" Grid.Row="1" VerticalAlignment="Bottom"/>
                 <TextBlock x:Name="tbScore" Text="0" Foreground="Red" FontSize="60" FontWeight="Bold" Grid.Row="2"/>
-                <TextBlock x:Name="tbIsHighscore" FontSize="20" Grid.Row="3" VerticalAlignment="Center"/>
+                <TextBlock x:Name="tbIsHighscore" Grid.Row="3" VerticalAlignment="Center"/>
                 <StackPanel x:Name="spNewHighscore" Visibility="Collapsed" Grid.Row="4">
-                    <TextBlock Text="Zadej jméno pro zápis do Síně slávy:" FontSize="20" FontWeight="Bold" Margin="30"/>
+                    <TextBlock Text="Zadej jméno pro zápis do Síně slávy:" FontWeight="Bold" Margin="30"/>
                     <TextBox x:Name="tbxWinnerName" Text="Hráč1" Width="200" FontSize="30" FontWeight="Bold" TextAlignment="Center" 
                              GotFocus="tbxWinnerName_GotFocus"/>
                 </StackPanel>
-                <TextBlock Text="Pro pokračování stiskni SPACE" FontSize="20" Margin="40" Foreground="Red" FontWeight="Bold" Grid.Row="5"/>
+                <TextBlock Text="Pro pokračování stiskni SPACE" Margin="40" Foreground="Red" FontWeight="Bold" Grid.Row="5"/>
             </Grid>
         </Border>
         <Border x:Name="brdHighscores" Visibility="Collapsed">
@@ -122,15 +127,15 @@
                             <DataTemplate>
                                 <Border BorderBrush="DarkGreen" BorderThickness="1">
                                     <Grid>
-                                        <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" Margin="10" Height="25"/>
-                                        <TextBlock Text="{Binding Score}" HorizontalAlignment="Right" FontSize="20" FontWeight="Bold" Margin="10" Height="25"/>
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Margin="10" FontSize="20"/>
+                                        <TextBlock Text="{Binding Score}" HorizontalAlignment="Right" FontWeight="Bold" Margin="10" FontSize="20"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </Border>
-                <TextBlock Text="Pro začátek nové hry stiskni SPACE..." FontSize="20" Foreground="Red" FontWeight="Bold"/>
+                <TextBlock Text="Pro začátek nové hry stiskni SPACE..." Foreground="Red" FontWeight="Bold"/>
                 <TextBlock Text="(pro ukončení hry stiskni ESCAPE...)" FontSize="15" Foreground="Red" FontWeight="Bold"/>
             </StackPanel>
         </Border>
