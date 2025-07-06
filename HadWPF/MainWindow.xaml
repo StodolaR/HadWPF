@@ -6,7 +6,8 @@
         xmlns:core="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:HadWPF"
         mc:Ignorable="d"
-        Title="HadWPF" SizeToContent="WidthAndHeight" x:Name="window" ResizeMode="CanMinimize" KeyUp="window_KeyUp">
+        Title="HadWPF" SizeToContent="WidthAndHeight" x:Name="window" ResizeMode="CanMinimize" KeyUp="window_KeyUp"
+        Icon="/Snake_icon.png">
     <Grid>
         <Grid.Resources>
             <Style TargetType="TextBlock">
