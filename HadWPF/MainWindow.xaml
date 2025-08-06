@@ -47,7 +47,7 @@
                     <EllipseGeometry Center="-2,0" RadiusX="5" RadiusY="6"/>
                 </Path.Data>
             </Path>
-            <Path x:Name="pWrongAppleRight" Fill="DarkRed" Canvas.Left="-20">
+            <Path x:Name="pWrongAppleRight" Fill="Red" Canvas.Left="-20">
                 <Path.RenderTransform>
                     <RotateTransform Angle="10"/>
                 </Path.RenderTransform>

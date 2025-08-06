@@ -160,9 +160,16 @@ namespace HadWPF
                 }
                 if (distance > collisionDistance && itemParts[0] == pStalk)
                 {
-                    for(int stoneIndex = 6; stoneIndex < cnAppleBoard.Children.Count; stoneIndex++)
+                    for (int stoneIndex = 6; stoneIndex < cnAppleBoard.Children.Count; stoneIndex++)
                     {
-                        if((distance = GetDistance(itemParts[0], (ShPath)cnAppleBoard.Children[stoneIndex])) < collisionDistance) break;
+                        if ((distance = GetDistance(itemParts[0], (ShPath)cnAppleBoard.Children[stoneIndex])) < collisionDistance) break;
+                    }
+                }
+                if (distance > collisionDistance && itemParts.Count() == 1)
+                {
+                    for (int appleIndex = 0; appleIndex < 6; appleIndex++)
+                    {
+                        if ((distance = GetDistance(itemParts[0], (ShPath)cnAppleBoard.Children[appleIndex])) < collisionDistance) break;
                     }
                 }
             }
